@@ -23,7 +23,7 @@ A Central de Vagas e Oportunidades Acadêmicas é uma plataforma web desenvolvid
 ## 3. Projeto da Aplicação Web
 
 ### 3.1 Modelagem do banco de dados (Semana 3)
-![Modelo Relacional](modelo-banco.png)
+![Modelo Relacional](./assets/modelo-banco.png)
 
 ### 3.1.1 Modelo físico (schema.sql)
 ```sql
