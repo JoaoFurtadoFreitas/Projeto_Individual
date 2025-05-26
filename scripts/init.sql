@@ -1,35 +1,53 @@
 -- init.sql
 
--- Criar extensão para suportar UUIDs, se ainda não estiver ativada
+-- Ativa extensão para gerar UUIDs
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Criar tabela de usuários com UUID como chave primária
+-- Tabela de usuários
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(100) UNIQUE NOT NULL
+  nome VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  senha_hash VARCHAR(255) NOT NULL,
+  tipo VARCHAR(50) NOT NULL, -- aluno, professor, admin
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Inserir 20 usuários com nomes e emails aleatórios
-INSERT INTO users (name, email)
-VALUES 
-  ('Alice Smith', 'alice.smith@example.com'),
-  ('Bob Johnson', 'bob.johnson@example.com'),
-  ('Carol Williams', 'carol.williams@example.com'),
-  ('David Jones', 'david.jones@example.com'),
-  ('Emma Brown', 'emma.brown@example.com'),
-  ('Frank Davis', 'frank.davis@example.com'),
-  ('Grace Wilson', 'grace.wilson@example.com'),
-  ('Henry Moore', 'henry.moore@example.com'),
-  ('Isabella Taylor', 'isabella.taylor@example.com'),
-  ('Jack Lee', 'jack.lee@example.com'),
-  ('Kate Clark', 'kate.clark@example.com'),
-  ('Liam Martinez', 'liam.martinez@example.com'),
-  ('Mia Rodriguez', 'mia.rodriguez@example.com'),
-  ('Noah Garcia', 'noah.garcia@example.com'),
-  ('Olivia Hernandez', 'olivia.hernandez@example.com'),
-  ('Patrick Martinez', 'patrick.martinez@example.com'),
-  ('Quinn Lopez', 'quinn.lopez@example.com'),
-  ('Rose Thompson', 'rose.thompson@example.com'),
-  ('Samuel Perez', 'samuel.perez@example.com'),
-  ('Tara Scott', 'tara.scott@example.com');
+-- Tabela de labels (tags)
+CREATE TABLE IF NOT EXISTS labels (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  nome VARCHAR(255) NOT NULL
+);
+
+-- Relacionamento N:N entre usuários e labels
+CREATE TABLE IF NOT EXISTS user_labels (
+  user_id UUID,
+  label_id UUID,
+  PRIMARY KEY (user_id, label_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (label_id) REFERENCES labels(id) ON DELETE CASCADE
+);
+
+-- Tabela de oportunidades
+CREATE TABLE IF NOT EXISTS opportunities (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  titulo VARCHAR(255) NOT NULL,
+  descricao TEXT NOT NULL,
+  tipo VARCHAR(100),
+  data_limite DATE,
+  autor_id UUID,
+  empresa VARCHAR(255),
+  link_externo VARCHAR(500),
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  destaque BOOLEAN DEFAULT false,
+  FOREIGN KEY (autor_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- Relacionamento N:N entre oportunidades e labels
+CREATE TABLE IF NOT EXISTS opportunity_labels (
+  opportunity_id UUID,
+  label_id UUID,
+  PRIMARY KEY (opportunity_id, label_id),
+  FOREIGN KEY (opportunity_id) REFERENCES opportunities(id) ON DELETE CASCADE,
+  FOREIGN KEY (label_id) REFERENCES labels(id) ON DELETE CASCADE
+);
