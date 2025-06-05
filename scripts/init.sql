@@ -1,53 +1,45 @@
--- init.sql
+/*DROP TABLE IF EXISTS usuario_label CASCADE;
+DROP TABLE IF EXISTS oportunidade_label CASCADE;
+DROP TABLE IF EXISTS label CASCADE;
+DROP TABLE IF EXISTS oportunidade CASCADE;
+DROP TABLE IF EXISTS usuario CASCADE;*/
 
--- Ativa extensão para gerar UUIDs
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; 
 
 -- Tabela de usuários
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE usuario (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  nome VARCHAR(255) NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  senha_hash VARCHAR(255) NOT NULL,
-  tipo VARCHAR(50) NOT NULL, -- aluno, professor, admin
-  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  nome VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  senha_hash TEXT NOT NULL
 );
 
--- Tabela de labels (tags)
-CREATE TABLE IF NOT EXISTS labels (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  nome VARCHAR(255) NOT NULL
+-- Tabela de labels (categorias/interesses)
+CREATE TABLE label (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(50) UNIQUE NOT NULL
 );
 
--- Relacionamento N:N entre usuários e labels
-CREATE TABLE IF NOT EXISTS user_labels (
-  user_id UUID,
-  label_id UUID,
-  PRIMARY KEY (user_id, label_id),
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (label_id) REFERENCES labels(id) ON DELETE CASCADE
+-- Relacionamento N:N entre usuário e label
+CREATE TABLE usuario_label (
+  usuario_id UUID REFERENCES usuario(id) ON DELETE CASCADE,
+  label_id INTEGER REFERENCES label(id) ON DELETE CASCADE,
+  PRIMARY KEY (usuario_id, label_id)
 );
 
 -- Tabela de oportunidades
-CREATE TABLE IF NOT EXISTS opportunities (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  titulo VARCHAR(255) NOT NULL,
+CREATE TABLE oportunidade (
+  id SERIAL PRIMARY KEY,
+  titulo VARCHAR(150) NOT NULL,
   descricao TEXT NOT NULL,
-  tipo VARCHAR(100),
-  data_limite DATE,
-  autor_id UUID,
-  empresa VARCHAR(255),
-  link_externo VARCHAR(500),
-  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  destaque BOOLEAN DEFAULT false,
-  FOREIGN KEY (autor_id) REFERENCES users(id) ON DELETE SET NULL
+  data_limite DATE NOT NULL,
+  imagem_url TEXT,
+  link TEXT NOT NULL
 );
 
--- Relacionamento N:N entre oportunidades e labels
-CREATE TABLE IF NOT EXISTS opportunity_labels (
-  opportunity_id UUID,
-  label_id UUID,
-  PRIMARY KEY (opportunity_id, label_id),
-  FOREIGN KEY (opportunity_id) REFERENCES opportunities(id) ON DELETE CASCADE,
-  FOREIGN KEY (label_id) REFERENCES labels(id) ON DELETE CASCADE
+-- Relacionamento N:N entre oportunidade e label
+CREATE TABLE oportunidade_label (
+  oportunidade_id INTEGER REFERENCES oportunidade(id) ON DELETE CASCADE,
+  label_id INTEGER REFERENCES label(id) ON DELETE CASCADE,
+  PRIMARY KEY (oportunidade_id, label_id)
 );

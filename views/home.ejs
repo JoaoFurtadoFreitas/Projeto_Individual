@@ -1,11 +1,27 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <title><%= title %></title>
-</head>
-<body>
-  <h1>Bem-vindo à <%= title %></h1>
-  <p>Esta página está em desenvolvimento</p>
-</body>
-</html>
+<%- include('partials/header', { usuario: usuario }) %>
+
+<h2>Recomendados</h2>
+<div class="card-container">
+  <% recomendadas.forEach(o => { %>
+    <div class="card">
+      <img src="<%= o.imagem_url || '/default.png' %>" alt="Imagem">
+      <h3><%= o.titulo %></h3>
+      <p>Prazo: <%= new Date(o.data_limite).toLocaleDateString() %></p>
+      <a href="/oportunidade/<%= o.id %>">Ver detalhes</a>
+    </div>
+  <% }) %>
+</div>
+
+<h2>Próximos da data limite</h2>
+<div class="card-container">
+  <% proximas.forEach(o => { %>
+    <div class="card">
+      <img src="<%= o.imagem_url || '/default.png' %>" alt="Imagem">
+      <h3><%= o.titulo %></h3>
+      <p>Prazo: <%= new Date(o.data_limite).toLocaleDateString() %></p>
+      <a href="/oportunidade/<%= o.id %>">Ver detalhes</a>
+    </div>
+  <% }) %>
+</div>
+
+<%- include('partials/footer') %>
