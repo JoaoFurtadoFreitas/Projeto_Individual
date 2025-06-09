@@ -37,16 +37,17 @@
             <p class="card-text"><strong>Email:</strong> <%= usuario.email %></p>
             <p class="card-text"><strong>Tipo:</strong> <%= usuario.tipo %></p>
             <hr>
-            <h6 class="mt-4">Labels de Interesse</h6>
-            <% if (usuario.labels && usuario.labels.length > 0) { %>
-              <ul class="list-group list-group-flush">
-                <% usuario.labels.forEach(label => { %>
-                  <li class="list-group-item"><%= label %></li>
-                <% }) %>
-              </ul>
-            <% } else { %>
-              <p class="text-muted">Nenhuma label selecionada.</p>
-            <% } %>
+           <h6 class="mt-4">Labels de Interesse</h6>
+          <% if (usuario.labels && usuario.labels.length > 0) { %>
+            <ul class="list-group list-group-flush">
+              <% usuario.labels.forEach(label => { %>
+                <li class="list-group-item"><%= label.nome %></li>
+              <% }) %>
+            </ul>
+          <% } else { %>
+            <p class="text-muted">Nenhuma label selecionada.</p>
+          <% } %>
+
             <a href="/usuario/editar" class="btn btn-outline-primary mt-3">Editar Perfil</a>
           </div>
         </div>

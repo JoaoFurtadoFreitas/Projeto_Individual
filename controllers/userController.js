@@ -42,13 +42,17 @@ module.exports = {
   },
 
   updateProfile: async (req, res) => {
-    const { nome, labels } = req.body;
-    const usuarioId = req.session.usuario.id;
+  const { nome, labels } = req.body;
+  const usuarioId = req.session.usuario.id;
 
-    await userService.update(usuarioId, { nome, labels: Array.isArray(labels) ? labels : [] });
-    req.session.usuario.nome = nome;
-    res.redirect('/usuario/perfil');
-  }
+  await userService.update(usuarioId, { nome, labels: Array.isArray(labels) ? labels : [] });
+
+  // Atualiza a sessão com os dados atualizados (com labels completas)
+  const usuarioAtualizado = await userService.getUsuarioComLabels(usuarioId);
+  req.session.usuario = usuarioAtualizado;
+
+  res.redirect('/usuario/perfil');
+}
 };
 
 
