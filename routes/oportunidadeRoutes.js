@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 const oportunidadeController = require('../controllers/oportunidadeController');
@@ -6,10 +7,13 @@ const oportunidadeController = require('../controllers/oportunidadeController');
 router.get('/nova', oportunidadeController.getNova);
 router.post('/nova', oportunidadeController.postNova);
 
-// Página de visualização geral (home já é tratado fora)
-router.get('/proximas', oportunidadeController.getProximas); // Controller precisa implementar se desejar
+// Página de visualização geral
+router.get('/proximas', oportunidadeController.getProximas);
 
-// (Opcional) API ou debug
+// Detalhes da oportunidade (rota dinâmica)
+router.get('/:id', oportunidadeController.getDetalhesOportunidade);
+
+// Rota de teste (não produção)
 if (process.env.NODE_ENV !== 'production') {
   const oportunidadeService = require('../services/oportunidadeService');
   router.get('/teste/proximas', async (req, res) => {
@@ -19,4 +23,3 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = router;
-

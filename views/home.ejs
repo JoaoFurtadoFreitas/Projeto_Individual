@@ -69,7 +69,7 @@
             <% if (o.labels && o.labels.length) { %>
               <div class="mb-2">
                 <% o.labels.forEach(label => { %>
-                  <span class="badge bg-secondary me-1"><%= label %></span>
+                  <span class="badge bg-secondary me-1"><%= label.nome %></span>
                 <% }) %>
               </div>
             <% } %>
@@ -116,7 +116,7 @@
               <% if (o.labels && o.labels.length) { %>
               <div class="mb-2">
                 <% o.labels.forEach(label => { %>
-                  <span class="badge bg-secondary me-1"><%= label %></span>
+                  <span class="badge bg-secondary me-1"><%= label.nome %></span>
                 <% }) %>
               </div>
             <% } %>
@@ -175,7 +175,7 @@
   <div class="modal fade" id="modalAdicionarOportunidade" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
-        <form method="POST" action="/oportunidades/adicionar">
+        <form method="POST" action="/oportunidades/nova">
           <div class="modal-header">
             <h5 class="modal-title" id="modalLabel">Nova Oportunidade</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -202,6 +202,18 @@
               <label for="data_limite" class="form-label">Data Limite</label>
               <input type="date" class="form-control" name="data_limite" id="data_limite" required>
             </div>
+            <div class="mb-3">
+              <label class="form-label">Labels</label>
+              <div class="form-check form-check-inline">
+                <% labelsDisponiveis.forEach(label => { %>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="labels[]" id="label_<%= label %>" value="<%= label %>">
+                    <label class="form-check-label" for="label_<%= label %>"><%= label %></label>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

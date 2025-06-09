@@ -4,7 +4,7 @@ const session = require('express-session');
 
 const app = express();
 
-// ⚠️ Adicione essas linhas
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -35,7 +35,7 @@ const userRoutes = require('./routes/userRoutes');
 app.use('/labels', labelRoutes);
 app.use('/usuario', userRoutes);
 app.use('/', indexRoutes);
-app.use('/', oportunidadeRoutes);
+app.use('/oportunidades', oportunidadeRoutes);
 
 // Middleware para 404
 app.use((req, res, next) => {
