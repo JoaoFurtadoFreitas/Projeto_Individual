@@ -1,0 +1,18 @@
+.descricao-curta {
+  position: relative;
+  max-height: 3.6em; /* cerca de 3 linhas */
+  line-height: 1.2em;
+  overflow: hidden;
+  padding-right: 1.5em;
+}
+
+.descricao-curta::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 3em;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(255,255,255,0), white 80%);
+}

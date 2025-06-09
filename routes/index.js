@@ -1,18 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
+const oportunidadeRoutes = require('./oportunidadeRoutes');
 const authRoutes = require('./authRoutes');
 const userRoutes = require('./userRoutes');
-const oportunidadeRoutes = require('./oportunidadeRoutes');
+const labelRoutes = require('./labelRoutes'); // <- Faltava isso
 
-router.use('/auth', authRoutes); // todas as rotas de autenticação começam com /auth
-router.use('/users', userRoutes); // todas as rotas de usuários começam com /users
-router.use('/oportunidades', oportunidadeRoutes); // todas as rotas de oportunidades com /oportunidades
+const oportunidadeController = require('../controllers/oportunidadeController');
 
-// Rota raiz opcional
-router.get('/', (req, res) => {
-  res.send('Bem-vindo à API Central de Vagas!');
-});
+// Página inicial
+router.get('/home', oportunidadeController.getHome);
+
+// Rotas agrupadas por entidade
+router.use('/oportunidades', oportunidadeRoutes);
+router.use('/auth', authRoutes);
+router.use('/usuario', userRoutes);
+router.use('/labels', labelRoutes); // <- Agora está ativa
 
 module.exports = router;
-
