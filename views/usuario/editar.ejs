@@ -24,13 +24,14 @@
                 <label class="form-label">Labels de Interesse</label>
                 <div class="row">
                   <% labels.forEach(label => { %>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="labels[]" value="<%= label.id %>"
-                    <%= usuario.labels.some(l => l.id === label.id) ? 'checked' : '' %>>
-                    <label class="form-check-label"><%= label.nome %></label>
-                </div>
-                <% }) %>
-
+                    <div class="col-6">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="labels[]" value="<%= label.id %>"
+                          <%= usuario.labels.some(l => l.id === label.id) ? 'checked' : '' %>>
+                        <label class="form-check-label"><%= label.nome %></label>
+                      </div>
+                    </div>
+                  <% }) %>
                 </div>
               </div>
 
