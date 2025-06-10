@@ -15,9 +15,26 @@ A Central de Vagas e Oportunidades Acadêmicas é uma plataforma web desenvolvid
 ## 2. Visão Geral da Aplicação Web
 
 ### 2.1 Personas (opcional)
+#### Aluno do Inteli
+Busca centralizar o recebimento de oportunidades acadêmicas em um só local. Deseja filtrar conteúdos por interesses pessoais e aplicar rapidamente a programas e eventos.
 
+#### Professor ou Orientador
+Compartilha editais e iniciativas com os alunos. Deseja publicar e acompanhar o engajamento com suas postagens.
+
+#### Administrador da Plataforma
+Responsável pela curadoria do conteúdo e manutenção da base de dados. Necessita de ferramentas para moderação e ajustes administrativos.
 
 ### 2.2 User Stories (opcional)
+. Como aluno, quero visualizar oportunidades com base nos meus interesses, para não perder prazos importantes.
+
+. Como usuário logado, quero editar minhas preferências e labels, para receber recomendações mais alinhadas ao meu perfil.
+
+. Como professor, quero poder publicar novas oportunidades acadêmicas, para que os alunos tenham acesso facilitado.
+
+. Como administrador, quero remover conteúdos inadequados ou desatualizados, para manter a qualidade da plataforma.
+
+. Como usuário visitante, quero ver oportunidades públicas antes de criar uma conta, para decidir se vale a pena me cadastrar.
+
 
 
 ## 3. Projeto da Aplicação Web
@@ -141,14 +158,100 @@ A WebAPI RESTful da aplicação está estruturada por entidade, com rotas espec�
 - `POST /labels`: Cria um novo label.
 
 ### 3.7 Interface e Navegação (Semana 07)
+A navegação da aplicação está estruturada para facilitar a experiência do usuário por meio de um layout intuitivo e responsivo. Os principais fluxos incluem:
+
+Navbar fixa com links para Home, Publicar (condicional), Perfil e Logout/Login.
+
+A página inicial apresenta seções como:
+
+“Recomendadas para você” (com base nos labels do usuário).
+
+“Próximas do prazo final” (ordenadas por data_limite).
+
+Cada card de oportunidade exibe:
+
+Título, descrição curta, autor, labels, data limite e imagem de capa.
+
+Um botão “Ver mais” abre um popup com descrição completa e botão externo para o link da oportunidade.
+
+A página de perfil permite:
+
+Edição do nome e seleção de novos labels via checkbox.
+
+Páginas públicas acessíveis para usuários não logados incluem:
+
+Login, cadastro e visualização básica de oportunidades em destaque.
+
 
 
 ## 4. Desenvolvimento da Aplicação Web (Semana 8)
 
 ### 4.1 Demonstração do Sistema Web (Semana 8)
+A aplicação foi desenvolvida com a stack:
 
+Backend: Node.js + Express
+
+Banco de dados: PostgreSQL via Supabase
+
+Frontend: EJS + HTML + Bootstrap
+
+Autenticação: Sessões gerenciadas por cookies e middleware customizado
+
+Arquitetura: MVC completo com separação entre models, controllers, services, views e rotas
+
+Funcionalidades implementadas:
+
+Cadastro e login com verificação por sessão
+
+Página principal com exibição dinâmica de cards
+
+Página de perfil com edição de informações e preferências
+
+Sistema de recomendação com base nos labels do usuário
+
+Publicação de oportunidades via formulário
+
+Popups com detalhes e botão externo para aplicação
+
+Diferenciação de funcionalidades por tipo de usuário (aluno, professor, admin)
+
+A demonstração pode ser acessada localmente via localhost:3000 após a configuração e execução do server.js.
 
 ### 4.2 Conclusões e Trabalhos Futuros (Semana 8)
+A plataforma Central de Vagas e Oportunidades Acadêmicas atinge seu objetivo de centralizar e organizar informações importantes para os alunos do Inteli. O uso de filtros por interesses (labels) aumenta a relevância das oportunidades visualizadas por cada usuário.
 
+Pontos positivos:
+
+Estrutura modular facilita manutenção e expansão.
+
+Integração com Supabase simplifica acesso ao banco de dados.
+
+Interface responsiva e clara, com foco em usabilidade.
+
+Boa separação entre lógica de negócio e apresentação.
+
+Melhorias futuras:
+
+Implementar sistema de notificações por e-mail ou dentro da plataforma.
+
+Permitir comentários ou curtidas em oportunidades.
+
+Adicionar área de favoritos ou histórico.
+
+Criar painel administrativo para melhor gestão de conteúdo.
+
+Desenvolver API pública para integração com outras plataformas do Inteli.
 
 ## 5. Referências
+Documentação oficial do Express.js
+
+Bootstrap v5 Docs: https://getbootstrap.com
+
+Supabase Docs: https://supabase.com/docs
+
+PostgreSQL Manual: https://www.postgresql.org/docs/
+
+EJS Docs: https://ejs.co/
+
+Aula de Programação Web - Módulo IN02
+
