@@ -102,7 +102,7 @@ O projeto segue a arquitetura **MVC (Model-View-Controller)**, promovendo separa
 
 - **Model (Modelos)**:
   - Contêm a lógica de acesso ao banco de dados.
-  - Representam entidades como `User`, `Opportunity`, `Label`.
+  - Representam entidades como `Usuario`, `Oportunidade`, `Label`.
 
 - **View (Visões)**:
   - Implementadas com EJS, são responsáveis por exibir os dados ao usuário.
@@ -126,15 +126,6 @@ O projeto segue a arquitetura **MVC (Model-View-Controller)**, promovendo separa
   - Arquivo principal `server.js` configura middlewares, EJS, assets estáticos e escuta a porta definida.
 
 ---
-
-
-### 3.3 Wireframes (opcional)
-
-
-### 3.4 Guia de estilos (opcional)
-
-
-### 3.5 Protótipo de alta fidelidade (opcional)
 
 
 ### 3.6 WebAPI e endpoints (Semana 5)
@@ -195,7 +186,7 @@ Banco de dados: PostgreSQL via Supabase
 
 Frontend: EJS + HTML + Bootstrap
 
-Autenticação: Sessões gerenciadas por cookies e middleware customizado
+Autenticação:  middleware customizado
 
 Arquitetura: MVC completo com separação entre models, controllers, services, views e rotas
 
@@ -216,6 +207,9 @@ Popups com detalhes e botão externo para aplicação
 Diferenciação de funcionalidades por tipo de usuário (aluno, professor, admin)
 
 A demonstração pode ser acessada localmente via localhost:3000 após a configuração e execução do server.js.
+
+#### Link do vídeo
+https://drive.google.com/file/d/1WSmk2D4M2bxDzefGL_TlQ2Mu6SJuXEhi/view?usp=sharing
 
 ### 4.2 Conclusões e Trabalhos Futuros (Semana 8)
 A plataforma Central de Vagas e Oportunidades Acadêmicas atinge seu objetivo de centralizar e organizar informações importantes para os alunos do Inteli. O uso de filtros por interesses (labels) aumenta a relevância das oportunidades visualizadas por cada usuário.
