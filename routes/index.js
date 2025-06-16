@@ -9,6 +9,10 @@ const labelRoutes = require('./labelRoutes'); // <- Faltava isso
 const oportunidadeController = require('../controllers/oportunidadeController');
 
 // Página inicial
+router.get('/', (req, res) => {
+  res.redirect('/home');
+});
+
 router.get('/home', oportunidadeController.getHome);
 
 // Rotas agrupadas por entidade

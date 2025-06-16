@@ -34,6 +34,11 @@ const userRoutes = require('./routes/userRoutes');
 
 app.use('/labels', labelRoutes);
 app.use('/usuario', userRoutes);
+app.use((req, res, next) => {
+  console.log('Rota recebida:', req.method, req.url);
+  next();
+});
+
 app.use('/', indexRoutes);
 app.use('/oportunidades', oportunidadeRoutes);
 
@@ -44,9 +49,12 @@ app.use((req, res, next) => {
 
 if (require.main === module) {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-  });
+ const HOST = '10.128.0.100'; // escuta em todas as interfaces de rede
+
+app.listen(PORT, HOST, () => {
+  console.log(`Servidor rodando em http://${HOST}:${PORT}`);
+});
+
 }
 
 module.exports = app;
