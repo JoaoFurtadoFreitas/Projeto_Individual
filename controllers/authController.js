@@ -2,18 +2,30 @@ const authService = require('../services/authService');
 
 module.exports = {
   getLoginPage: (req, res) => res.render('auth/login'),
-  getRegisterPage: (req, res) => res.render('auth/register'),
+  getRegisterPage: (req, res) => res.render('auth/register', { erro: null }),
+
 
   register: async (req, res) => {
-    const { nome, email, senha, password } = req.body;
+    const { nome, email, senha, password, tipo } = req.body;
     const senhaFinal = senha || password;
 
     try {
-      await authService.register(nome, email, senhaFinal);
-      res.redirect('/labels/select');
+      const usuario = await authService.register(nome, email, senhaFinal, tipo);
+     
+      // Adiciona o novo usuário à sessão:
+      req.session.usuario = usuario;
+
+      // Redireciona para a edição de perfil:
+      res.redirect('/usuario/editar');
     } catch (err) {
       console.error('Erro ao registrar:', err);
-      res.render('auth/register', { erro: 'Erro ao registrar. Tente novamente.' });
+      let mensagem = 'Erro ao registrar. Tente novamente.';
+    if (err.code === 'EMAIL_DUPLICADO') {
+      mensagem = 'email já cadastrado';
+    }
+
+    res.render('auth/register', { erro: mensagem });
+  
     }
   },
 

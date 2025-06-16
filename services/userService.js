@@ -18,11 +18,12 @@ async function update(id, { nome, labels }) {
 module.exports = {
   // 🆕 Função para criar usuário
   update,
-  createUser: async ({ nome, email, senha }) => {
+  createUser: async ({ nome, email, senha, tipo }) => {
   const bcrypt = require('bcryptjs');
-  const senha_hash = await bcrypt.hash(senha, 10); // Criptografa a senha
-  return await Usuario.create({ nome, email, senha_hash });
+  const senha_hash = await bcrypt.hash(senha, 10);
+  return await Usuario.create({ nome, email, senha_hash, cargo: tipo });
 },
+
 
 
   // 🆕 Função para listar usuários

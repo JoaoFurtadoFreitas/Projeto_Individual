@@ -20,40 +20,60 @@ async function getTodasLabels() {
   return result.rows.map(row => row.nome);
 }
 
+async function getPorIdComLabels(id) {
+  const { rows } = await db.query(`
+    SELECT o.*, 
+           json_agg(json_build_object('id', l.id, 'nome', l.nome)) AS labels
+    FROM oportunidade o
+    LEFT JOIN oportunidade_label ol ON ol.oportunidade_id = o.id
+    LEFT JOIN label l ON l.id = ol.label_id
+    WHERE o.id = $1
+    GROUP BY o.id
+  `, [id]);
+
+  return rows[0];
+}
+async function deletarVencidas() {
+  const result = await db.query(`
+    DELETE FROM oportunidade
+    WHERE data_limite < CURRENT_DATE
+    RETURNING id
+  `);
+  console.log(`Oportunidades vencidas deletadas: ${result.rowCount}`);
+}
+
+
 async function criar(dados) {
-  const { titulo, descricao, imagem_url, data_limite, link, labels } = dados;
+  const { titulo, descricao, imagem_url, data_limite, link, labels, usuario_id } = dados;
 
   if (!titulo || !descricao || !data_limite || !link) {
     throw new Error("Campos obrigatórios não preenchidos.");
   }
 
-  // Insere a oportunidade
-  const result = await db.query(
-    `INSERT INTO oportunidade (titulo, descricao, imagem_url, data_limite, link)
-     VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-    [titulo, descricao, imagem_url, data_limite, link]
-  );
+  const result = await Oportunidade.create({
+    titulo,
+    descricao,
+    imagem_url,
+    data_limite,
+    link,
+    usuario_id
+  });
 
-  const oportunidadeId = result.rows[0].id;
+  const oportunidadeId = result.id;
 
   if (labels && labels.length) {
-    // labels pode ser string (1 label) ou array (várias), normalize para array
     const labelsArray = Array.isArray(labels) ? labels : [labels];
-
-    // Buscar os IDs das labels a partir dos nomes
     const placeholders = labelsArray.map((_, i) => `$${i + 1}`).join(', ');
     const queryLabels = await db.query(
       `SELECT id, nome FROM label WHERE nome IN (${placeholders})`,
       labelsArray
     );
 
-    // Mapear nomes para ids
     const nomeParaId = {};
     queryLabels.rows.forEach(row => {
       nomeParaId[row.nome] = row.id;
     });
 
-    // Inserir associações com ids corretos
     await Promise.all(labelsArray.map(nomeLabel => {
       const labelId = nomeParaId[nomeLabel];
       if (labelId) {
@@ -61,13 +81,25 @@ async function criar(dados) {
           'INSERT INTO oportunidade_label (oportunidade_id, label_id) VALUES ($1, $2)',
           [oportunidadeId, labelId]
         );
-      } else {
-        // Se não encontrar a label no banco, ignore ou trate como erro
-        console.warn(`Label não encontrada no banco: ${nomeLabel}`);
-        return Promise.resolve();
       }
     }));
   }
+}
+
+async function deletar(id) {
+  // Remove os vínculos com labels primeiro (por integridade referencial)
+  await db.query('DELETE FROM oportunidade_label WHERE oportunidade_id = $1', [id]);
+  // Depois remove a própria oportunidade
+  await db.query('DELETE FROM oportunidade WHERE id = $1', [id]);
+}
+
+async function buscarPorId(id) {
+ return await Oportunidade.findWithLabels(id);;
+}
+
+async function getTodas() {
+  const oportunidades = await Oportunidade.findAll();
+  return await Promise.all(oportunidades.map(o => Oportunidade.findWithLabels(o.id)));
 }
 
 
@@ -79,6 +111,11 @@ module.exports = {
   getRecomendadasComLabels,
   getPorId: async (id) => await Oportunidade.findById(id),
   getComLabels: async (id) => await Oportunidade.findWithLabels(id),
-  getTodasLabels
+  getTodasLabels,
+  deletar,
+  getPorIdComLabels,
+  buscarPorId,
+  getTodas,
+  deletarVencidas
 };
 

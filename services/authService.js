@@ -11,12 +11,18 @@ module.exports = {
 },
 
 
-  register: async (nome, email, senha) => {
+register: async (nome, email, senha, cargo) => {
   if (!senha) {
     throw new Error('Senha não fornecida');
   }
+   const existente = await Usuario.findByEmail(email);
+    if (existente) {
+      const err = new Error('email já cadastrado');
+      err.code = 'EMAIL_DUPLICADO';
+      throw err;
+    }
   const senha_hash = await bcrypt.hash(senha, 10);
-  return await Usuario.create({ nome, email, senha_hash });
+  return await Usuario.create({ nome, email, senha_hash, cargo });
 }
 
 };

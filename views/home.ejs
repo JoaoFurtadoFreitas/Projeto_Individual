@@ -52,125 +52,69 @@
   </section>
   <% } %>
 
-  <!-- Oportunidades Recomendadas -->
+ <!-- Seção: Recomendadas -->
 <% if (recomendadas && recomendadas.length) { %>
-<section class="container py-5">
-  <h3>Oportunidades Recomendadas</h3>
-  <div class="row">
-    <% recomendadas.forEach(o => { %>
-      <div class="col-md-4 mb-4">
-        <div class="card h-100">
-          <% if (o.imagem_url) { %>
-            <img src="<%= o.imagem_url %>" class="card-img-top" alt="Imagem da oportunidade">
-          <% } %>
-          <div class="card-body">
-            <h5 class="card-title"><%= o.titulo %></h5>
-            <p class="card-text"><%= o.resumo %></p>
-            <% if (o.labels && o.labels.length) { %>
-              <div class="mb-2">
-                <% o.labels.forEach(label => { %>
-                  <span class="badge bg-secondary me-1"><%= label.nome %></span>
-                <% }) %>
-              </div>
-            <% } %>
-
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalOportunidade<%= o.id %>">Detalhes</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal da Oportunidade -->
-      <div class="modal fade" id="modalOportunidade<%= o.id %>" tabindex="-1" aria-labelledby="modalOportunidadeLabel<%= o.id %>" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalOportunidadeLabel<%= o.id %>"><%= o.titulo %></h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-              <p><%= o.descricao %></p>
-              <a href="<%= o.link %>" class="btn btn-success" target="_blank" rel="noopener noreferrer">Acessar oportunidade</a>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    <% }) %>
-  </div> <!-- Fim da row -->
-</section>
-<% } %>
-
-  <!-- Próximas da Data Limite -->
-  <% if (proximas && proximas.length) { %>
   <section class="container py-5">
-    <h3>Próximas da Data Limite</h3>
+    <h3 class="mb-4">Recomendadas para você</h3>
     <div class="row">
-      <% proximas.forEach(o => { %>
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 border-warning">
-            <div class="card-body">
-              <h5 class="card-title"><%= o.titulo %></h5>
-              <p class="card-text"><%= o.descricao %></p>
-              <% if (o.labels && o.labels.length) { %>
-              <div class="mb-2">
-                <% o.labels.forEach(label => { %>
-                  <span class="badge bg-secondary me-1"><%= label.nome %></span>
-                <% }) %>
-              </div>
-            <% } %>
-
-              <p class="text-danger">Inscrição até: <%= new Date(o.data_limite).toLocaleDateString('pt-BR') %></p>
-              <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalOportunidade<%= o.id %>">
-                Ver detalhes
-              </button>
-                          <!-- Modal da Oportunidade -->
-            <div class="modal fade" id="modalOportunidade<%= o.id %>" tabindex="-1" aria-labelledby="modalOportunidadeLabel<%= o.id %>" aria-hidden="true">
-              <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                  <% if (o.imagem_url) { %>
-                    <img src="<%= o.imagem_url %>" class="img-fluid rounded-top" alt="Imagem da oportunidade">
-                  <% } %>
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="modalOportunidadeLabel<%= o.id %>"><%= o.titulo %></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                  </div>
-                  <div class="modal-body">
-                    <% if (o.labels && o.labels.length) { %>
-                    <div class="mb-3">
-                      <strong>Labels:</strong>
-                      <% o.labels.forEach(label => { %>
-                        <span class="badge bg-info text-dark me-1"><%= label %></span>
-                      <% }) %>
-                    </div>
-                  <% } %>
-
-                    <p><%= o.descricao %></p>
-                    <a href="<%= o.link %>" class="btn btn-success" target="_blank" rel="noopener noreferrer">Acessar oportunidade</a>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-            </div>
-          </div>
-        </div>
+      <% recomendadas.forEach((o, index) => { %>
+        <%- include('partials/cardOportunidade', { o, classeExtra: index >= 3 ? 'd-none recomendadas-card' : 'recomendadas-card' }) %>
+        <%- include('partials/modalOportunidade', { o }) %>
       <% }) %>
     </div>
+    <% if (recomendadas.length > 3) { %>
+      <div class="text-center mt-3">
+        <button id="mostrar-mais-recomendadas" class="btn btn-outline-success">Mostrar mais</button>
+      </div>
+    <% } %>
   </section>
-  <% } %>
+<% } %>
 
+<!-- Seção: Próximas da Data Limite -->
+<% if (proximas && proximas.length) { %>
+  <section class="container py-5">
+    <h3 class="mb-4">Próximas da Data Limite</h3>
+    <div class="row">
+      <% proximas.forEach((o, index) => { %>
+      <%- include('partials/cardOportunidade', { 
+            o, 
+            classeExtra: index >= 3 ? 'd-none proximas-card' : 'proximas-card', 
+            mostrarDiasRestantes: true
+      }) %>
+      <%- include('partials/modalOportunidade', { o }) %>
+    <% }) %>
+
+    </div>
+    <% if (proximas.length > 3) { %>
+      <div class="text-center mt-3">
+        <button id="mostrar-mais-proximas" class="btn btn-outline-warning">Mostrar mais</button>
+      </div>
+    <% } %>
+  </section>
+<% } %>
+
+<!-- Seção: Todas as Oportunidades -->
+<% if (todas && todas.length) { %>
+  <section class="container py-5">
+    <h3 class="mb-4">Todas as Oportunidades</h3>
+    <div class="row">
+      <% todas.forEach((o, index) => { %>
+        <%- include('partials/cardOportunidade', { o, classeExtra: index >= 3 ? 'd-none todas-card' : 'todas-card' }) %>
+        <%- include('partials/modalOportunidade', { o }) %>
+      <% }) %>
+    </div>
+    <% if (todas.length > 3) { %>
+      <div class="text-center mt-3">
+        <button id="mostrar-mais-todas" class="btn btn-outline-primary">Mostrar mais</button>
+      </div>
+    <% } %>
+  </section>
+<% } %>
    <% if (usuario) { %>
 <section class="container py-4">
   <a href="#" class="btn btn-success mb-4" data-bs-toggle="modal" data-bs-target="#modalAdicionarOportunidade">
     Criar nova oportunidade
   </a>
-
   <!-- Modal -->
   <div class="modal fade" id="modalAdicionarOportunidade" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -200,7 +144,7 @@
             </div>
             <div class="mb-3">
               <label for="data_limite" class="form-label">Data Limite</label>
-              <input type="date" class="form-control" name="data_limite" id="data_limite" required>
+              <input type="date" class="form-control" name="data_limite" id="data_limite" required min="<%= new Date().toISOString().split('T')[0] %>">
             </div>
             <div class="mb-3">
               <label class="form-label">Labels</label>
@@ -213,7 +157,6 @@
                 <% }) %>
               </div>
             </div>
-
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -225,7 +168,6 @@
   </div>
 </section>
 <% } %>
-
   <!-- FAQ -->
   <section class="container py-5">
     <h3>Perguntas Frequentes</h3>
@@ -242,7 +184,6 @@
           </div>
         </div>
       </div>
-
       <div class="accordion-item">
         <h2 class="accordion-header" id="faq2">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
@@ -257,7 +198,22 @@
       </div>
     </div>
   </section>
+  <%- include('partials/footer') %>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  document.getElementById('mostrar-mais-todas')?.addEventListener('click', () => {
+    document.querySelectorAll('.todas-card.d-none').forEach(card => card.classList.remove('d-none'));
+    document.getElementById('mostrar-mais-todas').style.display = 'none';
+  });
+  document.getElementById('mostrar-mais-recomendadas')?.addEventListener('click', () => {
+    document.querySelectorAll('.recomendadas-card.d-none').forEach(card => card.classList.remove('d-none'));
+    document.getElementById('mostrar-mais-recomendadas').style.display = 'none';
+  });
+  document.getElementById('mostrar-mais-proximas')?.addEventListener('click', () => {
+    document.querySelectorAll('.proximas-card.d-none').forEach(card => card.classList.remove('d-none'));
+    document.getElementById('mostrar-mais-proximas').style.display = 'none';
+  });
+</script>
 </body>
 </html>

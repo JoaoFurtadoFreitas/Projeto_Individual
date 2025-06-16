@@ -11,13 +11,14 @@ module.exports = {
     return result.rows[0];
   },
 
-  create: async ({ nome, email, senha_hash }) => {
-    const result = await db.query(
-      'INSERT INTO usuario (nome, email, senha_hash) VALUES ($1, $2, $3) RETURNING *',
-      [nome, email, senha_hash]
-    );
-    return result.rows[0];
-  },
+  create: async ({ nome, email, senha_hash, cargo }) => {
+  const result = await db.query(
+    'INSERT INTO usuario (nome, email, senha_hash, cargo) VALUES ($1, $2, $3, $4) RETURNING *',
+    [nome, email, senha_hash, cargo]
+  );
+  return result.rows[0];
+},
+
 
   updateNome: async (usuarioId, nome) => {
     await db.query('UPDATE usuario SET nome = $1 WHERE id = $2', [nome, usuarioId]);
