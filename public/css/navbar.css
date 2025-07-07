@@ -95,6 +95,7 @@
 .navbar-link.active {
   color: var(--navbar-text-hover);
   background: rgba(37, 99, 235, 0.1);
+  font-weight: 600;
 }
 
 .navbar-icon {
@@ -198,10 +199,6 @@
     justify-content: flex-start;
   }
   
-  .navbar-link:hover {
-    background: rgba(37, 99, 235, 0.05);
-  }
-  
   .navbar-toggle {
     display: block;
   }
@@ -231,31 +228,14 @@
   animation: slideDown 0.3s ease-out;
 }
 
-/* Estados especiais */
-.navbar-link.favorites {
-  position: relative;
-}
-
-.navbar-link.favorites::after {
-  content: '';
-  position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
-  width: 8px;
-  height: 8px;
-  background: #ef4444;
-  border-radius: 50%;
-  border: 2px solid var(--navbar-bg);
-}
-
-/* Melhorias de acessibilidade */
+/* Estados de foco para acessibilidade */
 .navbar-link:focus,
 .navbar-toggle:focus {
   outline: 2px solid var(--navbar-text-hover);
   outline-offset: 2px;
 }
 
-/* Suporte para prefers-reduced-motion */
+/* Redução de movimento */
 @media (prefers-reduced-motion: reduce) {
   .navbar-menu,
   .navbar-link,

@@ -33,6 +33,7 @@ async function getPorIdComLabels(id) {
 
   return rows[0];
 }
+
 async function deletarVencidas() {
   const result = await db.query(`
     DELETE FROM oportunidade
@@ -42,6 +43,21 @@ async function deletarVencidas() {
   console.log(`Oportunidades vencidas deletadas: ${result.rowCount}`);
 }
 
+// Nova função para filtrar por label
+async function getByLabel(labelNome) {
+  const { rows } = await db.query(`
+    SELECT DISTINCT o.*, 
+           json_agg(json_build_object('id', l.id, 'nome', l.nome)) AS labels
+    FROM oportunidade o
+    LEFT JOIN oportunidade_label ol ON ol.oportunidade_id = o.id
+    LEFT JOIN label l ON l.id = ol.label_id
+    WHERE l.nome = $1 AND o.data_limite >= CURRENT_DATE
+    GROUP BY o.id
+    ORDER BY o.data_limite ASC
+  `, [labelNome]);
+
+  return rows;
+}
 
 async function criar(dados) {
   const { titulo, descricao, imagem_url, data_limite, link, labels, usuario_id } = dados;
@@ -102,7 +118,6 @@ async function getTodas() {
   return await Promise.all(oportunidades.map(o => Oportunidade.findWithLabels(o.id)));
 }
 
-
 module.exports = {
   criar,
   getRecomendadas: getRecomendadasComLabels,
@@ -116,6 +131,7 @@ module.exports = {
   getPorIdComLabels,
   buscarPorId,
   getTodas,
-  deletarVencidas
+  deletarVencidas,
+  getByLabel
 };
 

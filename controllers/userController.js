@@ -42,17 +42,42 @@ module.exports = {
   },
 
   updateProfile: async (req, res) => {
-  const { nome, labels } = req.body;
-  const usuarioId = req.session.usuario.id;
+    const { nome, labels } = req.body;
+    const usuarioId = req.session.usuario.id;
 
-  await userService.update(usuarioId, { nome, labels: Array.isArray(labels) ? labels : [] });
+    await userService.update(usuarioId, { nome, labels: Array.isArray(labels) ? labels : [] });
 
-  // Atualiza a sessão com os dados atualizados (com labels completas)
-  const usuarioAtualizado = await userService.getUsuarioComLabels(usuarioId);
-  req.session.usuario = usuarioAtualizado;
+    // Atualiza a sessão com os dados atualizados (com labels completas)
+    const usuarioAtualizado = await userService.getUsuarioComLabels(usuarioId);
+    req.session.usuario = usuarioAtualizado;
 
-  res.redirect('/usuario/perfil');
-}
+    res.redirect('/usuario/perfil');
+  },
+
+  // Nova função para favoritos
+  getFavorites: async (req, res) => {
+    const usuarioId = req.session.usuario?.id;
+    if (!usuarioId) return res.redirect('/auth/login');
+
+    try {
+      // Por enquanto, vamos mostrar eventos recomendados como favoritos
+      // Em uma implementação completa, você teria uma tabela de favoritos
+      const favoritos = await userService.getFavoritos(usuarioId);
+      const labelsDisponiveis = await userService.getTodasLabels();
+
+      res.render('home', {
+        todas: favoritos,
+        recomendadas: [],
+        proximas: [],
+        usuario: req.session.usuario,
+        labelsDisponiveis,
+        isFavoritesPage: true
+      });
+    } catch (err) {
+      console.error('Erro ao carregar favoritos:', err);
+      res.status(500).send('Erro ao carregar favoritos.');
+    }
+  }
 };
 
 

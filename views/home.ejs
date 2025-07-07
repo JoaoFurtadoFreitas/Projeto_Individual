@@ -4,10 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Go4It</title>
+  <title><%= locals.isFavoritesPage ? 'Favoritos' : (locals.tagAtiva ? `Eventos - ${locals.tagAtiva}` : 'Go4It') %></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/public/css/style.css">
   <link rel="stylesheet" href="/public/css/navbar.css">
+  <link rel="stylesheet" href="/public/css/footer.css">
   <link rel="stylesheet" href="/public/css/home.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -27,13 +28,13 @@
       
       <ul class="navbar-menu" id="navbarMenu">
         <li class="navbar-item">
-          <a href="/home" class="navbar-link active">
+          <a href="/home" class="navbar-link <%= !locals.isFavoritesPage && !locals.tagAtiva ? 'active' : '' %>">
             <i class="fas fa-home navbar-icon"></i>
             Início
           </a>
         </li>
         <li class="navbar-item">
-          <a href="/favorites" class="navbar-link favorites">
+          <a href="/favorites" class="navbar-link favorites <%= locals.isFavoritesPage ? 'active' : '' %>">
             <i class="fas fa-heart navbar-icon"></i>
             Favoritos
           </a>
@@ -49,11 +50,9 @@
   </nav>
 
   <!-- Header da página -->
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">Eventos e Oportunidades</h1>
-      <p class="page-subtitle">Descubra eventos incríveis e oportunidades únicas para expandir seus horizontes</p>
-    </div>
+  <div class="home-hero">
+    <h1 class="home-slogan">De usuários, para usuários, <span class="home-highlight">Go4it</span></h1>
+    <p class="home-subtitle">Descubra, compartilhe e aproveite oportunidades acadêmicas únicas para expandir seus horizontes!</p>
   </div>
 
   <!-- Menu de filtros por tag -->
@@ -61,13 +60,13 @@
     <div class="container">
       <div class="filters-container">
         <div class="filters-scroll">
-          <a href="/home" class="filter-btn filter-btn-all">
+          <a href="/home" class="filter-btn filter-btn-all <%= !locals.tagAtiva && !locals.isFavoritesPage ? 'active' : '' %>">
             <i class="fas fa-th-large"></i>
             Todos
           </a>
           <% if (labelsDisponiveis && labelsDisponiveis.length > 0) { %>
             <% labelsDisponiveis.forEach(tag => { %>
-              <a href="/filter/<%= tag %>" class="filter-btn filter-btn-<%= tag.toLowerCase() %>">
+              <a href="/filter/<%= tag %>" class="filter-btn filter-btn-<%= tag.toLowerCase() %> <%= locals.tagAtiva === tag ? 'active' : '' %>">
                 <%= tag %>
               </a>
             <% }) %>
@@ -142,100 +141,137 @@
           <div class="events-empty-icon">
             <i class="fas fa-calendar-times"></i>
           </div>
-          <h3>Nenhum evento encontrado</h3>
-          <p>Não há eventos disponíveis no momento. Volte mais tarde!</p>
+          <% if (locals.isFavoritesPage) { %>
+            <h3>Nenhum favorito encontrado</h3>
+            <p>Configure seus interesses no perfil para ver eventos recomendados!</p>
+            <a href="/perfil" class="btn btn-primary">Configurar Interesses</a>
+          <% } else if (locals.tagAtiva) { %>
+            <h3>Nenhum evento encontrado</h3>
+            <p>Não há eventos disponíveis para "<%= locals.tagAtiva %>" no momento.</p>
+            <a href="/home" class="btn btn-primary">Ver Todos os Eventos</a>
+          <% } else { %>
+            <h3>Nenhum evento encontrado</h3>
+            <p>Não há eventos disponíveis no momento. Volte mais tarde!</p>
+          <% } %>
         </div>
       <% } %>
     </div>
   </div>
 
   <!-- Botão para adicionar novo evento (apenas para usuários logados) -->
-  <% if (usuario) { %>
-    <div class="container text-center mt-5">
-      <a href="#" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#modalAdicionarOportunidade">
+  <% if (usuario && !locals.isFavoritesPage && !locals.tagAtiva) { %>
+    <div class="text-center">
+      <button type="button" class="create-event-btn" id="openCreateEventModal">
         <i class="fas fa-plus"></i>
         Criar novo evento
-      </a>
+      </button>
     </div>
   <% } %>
 
   <!-- Modal para adicionar evento -->
-  <% if (usuario) { %>
-    <div class="modal fade" id="modalAdicionarOportunidade" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-          <form method="POST" action="/oportunidades/nova">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalLabel">Novo Evento</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+  <% if (usuario && !locals.isFavoritesPage && !locals.tagAtiva) { %>
+    <div class="event-modal" id="createEventModal" style="display:none;">
+      <div class="event-modal-content">
+        <form class="event-modal-form" method="POST" action="/oportunidades/nova">
+          <div class="event-modal-header">
+            <h5 class="event-modal-title" id="modalLabel">Novo Evento</h5>
+            <button type="button" class="event-modal-close" id="closeCreateEventModal" aria-label="Fechar">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="form-group">
+            <label for="titulo" class="form-label">Título do Evento</label>
+            <input type="text" class="form-input" name="titulo" id="titulo" required>
+          </div>
+          <div class="form-group">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea class="form-input" name="descricao" id="descricao" rows="4" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="imagem_url" class="form-label">URL da Imagem</label>
+            <input type="url" class="form-input" name="imagem_url" id="imagem_url">
+          </div>
+          <div class="form-group">
+            <label for="link" class="form-label">Link do Evento</label>
+            <input type="url" class="form-input" name="link" id="link" required>
+          </div>
+          <div class="form-group">
+            <label for="data_limite" class="form-label">Data do Evento</label>
+            <input type="date" class="form-input" name="data_limite" id="data_limite" required min="<%= new Date().toISOString().split('T')[0] %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Categorias</label>
+            <div class="form-check-group">
+              <% if (labelsDisponiveis) { %>
+                <% labelsDisponiveis.forEach(label => { %>
+                  <label class="form-check">
+                    <input type="checkbox" name="labels[]" value="<%= label %>">
+                    <span><%= label %></span>
+                  </label>
+                <% }) %>
+              <% } %>
             </div>
-            <div class="modal-body">
-              <div class="mb-3">
-                <label for="titulo" class="form-label">Título do Evento</label>
-                <input type="text" class="form-control" name="titulo" id="titulo" required>
-              </div>
-              <div class="mb-3">
-                <label for="descricao" class="form-label">Descrição</label>
-                <textarea class="form-control" name="descricao" id="descricao" rows="4" required></textarea>
-              </div>
-              <div class="mb-3">
-                <label for="imagem_url" class="form-label">URL da Imagem</label>
-                <input type="url" class="form-control" name="imagem_url" id="imagem_url">
-              </div>
-              <div class="mb-3">
-                <label for="link" class="form-label">Link do Evento</label>
-                <input type="url" class="form-control" name="link" id="link" required>
-              </div>
-              <div class="mb-3">
-                <label for="data_limite" class="form-label">Data do Evento</label>
-                <input type="date" class="form-control" name="data_limite" id="data_limite" required min="<%= new Date().toISOString().split('T')[0] %>">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Categorias</label>
-                <div class="form-check form-check-inline">
-                  <% if (labelsDisponiveis) { %>
-                    <% labelsDisponiveis.forEach(label => { %>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" name="labels[]" id="label_<%= label %>" value="<%= label %>">
-                        <label class="form-check-label" for="label_<%= label %>"><%= label %></label>
-                      </div>
-                    <% }) %>
-                  <% } %>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-primary">Criar Evento</button>
-            </div>
-          </form>
-        </div>
+          </div>
+          <button type="submit" class="btn-criar">
+            <i class="fas fa-plus"></i> Criar Evento
+          </button>
+        </form>
       </div>
     </div>
   <% } %>
 
+  <!-- Footer -->
   <%- include('partials/footer') %>
 
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Navbar JavaScript -->
   <script>
-    // Toggle do menu hambúrguer
     document.addEventListener('DOMContentLoaded', function() {
       const navbarToggle = document.getElementById('navbarToggle');
       const navbarMenu = document.getElementById('navbarMenu');
       
-      navbarToggle.addEventListener('click', function() {
-        navbarToggle.classList.toggle('active');
-        navbarMenu.classList.toggle('active');
-      });
-      
-      // Fechar menu ao clicar em um link
-      const navbarLinks = document.querySelectorAll('.navbar-link');
-      navbarLinks.forEach(link => {
-        link.addEventListener('click', function() {
-          navbarToggle.classList.remove('active');
-          navbarMenu.classList.remove('active');
+      if (navbarToggle && navbarMenu) {
+        navbarToggle.addEventListener('click', function() {
+          navbarMenu.classList.toggle('active');
+          navbarToggle.classList.toggle('active');
         });
-      });
+      }
+    });
+  </script>
+
+  <script>
+    // Modal funcional sem Bootstrap
+    document.addEventListener('DOMContentLoaded', function() {
+      const openBtn = document.getElementById('openCreateEventModal');
+      const modal = document.getElementById('createEventModal');
+      const closeBtn = document.getElementById('closeCreateEventModal');
+      if (openBtn && modal && closeBtn) {
+        openBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          modal.style.display = 'flex';
+          setTimeout(() => { modal.classList.add('show'); }, 10);
+        });
+        closeBtn.addEventListener('click', function() {
+          modal.classList.remove('show');
+          setTimeout(() => { modal.style.display = 'none'; }, 200);
+        });
+        // Fechar ao clicar fora do conteúdo
+        modal.addEventListener('mousedown', function(e) {
+          if (e.target === modal) {
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+          }
+        });
+        // ESC fecha
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && modal.style.display === 'flex') {
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+          }
+        });
+      }
     });
   </script>
 </body>

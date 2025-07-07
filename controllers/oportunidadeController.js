@@ -29,6 +29,49 @@ module.exports = {
   }
 },
 
+  // Nova função para página de evento individual
+  getEventPage: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const evento = await oportunidadeService.getComLabels(id);
+
+      if (!evento) {
+        return res.status(404).send('Evento não encontrado');
+      }
+
+      res.render('event', {
+        evento,
+        usuario: req.session?.usuario || null
+      });
+    } catch (err) {
+      console.error('Erro ao carregar evento:', err);
+      res.status(500).send('Erro ao carregar evento');
+    }
+  },
+
+  // Nova função para filtro por tag
+  getFilteredEvents: async (req, res) => {
+    try {
+      const tag = req.params.tag;
+      const usuarioId = req.session?.usuario?.id;
+
+      // Buscar eventos filtrados por tag
+      const eventosFiltrados = await oportunidadeService.getByLabel(tag);
+      const labelsDisponiveis = await oportunidadeService.getTodasLabels();
+
+      res.render('home', {
+        todas: eventosFiltrados,
+        recomendadas: [],
+        proximas: [],
+        usuario: req.session?.usuario || null,
+        labelsDisponiveis,
+        tagAtiva: tag
+      });
+    } catch (err) {
+      console.error('Erro ao filtrar eventos:', err);
+      res.status(500).send('Erro ao filtrar eventos');
+    }
+  },
 
   getProximas: async (req, res) => {
     try {
@@ -56,7 +99,6 @@ getDetalhes: async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar a oportunidade' });
   }
 },
-
 
   getNova: async (req, res) => {
     try {
