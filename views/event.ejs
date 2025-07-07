@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= evento.titulo %> - Go4It</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/navbar.css">
+  <link rel="stylesheet" href="/public/css/event.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="/home" class="navbar-logo">
+        <i class="fas fa-rocket logo-icon"></i>
+        Go4It
+      </a>
+      
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle navigation">
+        <span class="navbar-toggle-icon"></span>
+      </button>
+      
+      <ul class="navbar-menu" id="navbarMenu">
+        <li class="navbar-item">
+          <a href="/home" class="navbar-link">
+            <i class="fas fa-home navbar-icon"></i>
+            Início
+          </a>
+        </li>
+        <li class="navbar-item">
+          <a href="/favorites" class="navbar-link favorites">
+            <i class="fas fa-heart navbar-icon"></i>
+            Favoritos
+          </a>
+        </li>
+        <li class="navbar-item">
+          <a href="/perfil" class="navbar-link">
+            <i class="fas fa-user navbar-icon"></i>
+            Perfil
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Container principal -->
+  <div class="event-detail-container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-nav">
+      <div class="container">
+        <a href="/home" class="breadcrumb-link">
+          <i class="fas fa-arrow-left"></i>
+          Voltar aos eventos
+        </a>
+      </div>
+    </nav>
+
+    <!-- Header do evento -->
+    <div class="event-header">
+      <div class="container">
+        <div class="event-header-content">
+          <h1 class="event-title"><%= evento.titulo %></h1>
+          <% if (evento.tipo) { %>
+            <div class="event-type-badge">
+              <i class="fas fa-tag"></i>
+              <%= evento.tipo %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="event-content">
+      <div class="container">
+        <div class="event-layout">
+          <!-- Coluna principal -->
+          <div class="event-main">
+            <!-- Imagem do evento -->
+            <% if (evento.imagem_url) { %>
+              <div class="event-image-container">
+                <img src="<%= evento.imagem_url %>" alt="<%= evento.titulo %>" class="event-image">
+              </div>
+            <% } %>
+
+            <!-- Descrição -->
+            <div class="event-description">
+              <h2 class="section-title">Sobre o evento</h2>
+              <p class="description-text"><%= evento.descricao %></p>
+            </div>
+
+            <!-- Tags -->
+            <% if (evento.labels && evento.labels.length > 0) { %>
+              <div class="event-tags-section">
+                <h3 class="section-title">Categorias</h3>
+                <div class="tags-container">
+                  <% evento.labels.forEach(label => { %>
+                    <% if (label && label.nome) { %>
+                      <span class="event-tag <%= label.nome.toLowerCase() %>">
+                        <%= label.nome %>
+                      </span>
+                    <% } %>
+                  <% }) %>
+                </div>
+              </div>
+            <% } %>
+          </div>
+
+          <!-- Sidebar com informações -->
+          <div class="event-sidebar">
+            <div class="event-info-card">
+              <h3 class="info-card-title">Informações do Evento</h3>
+              
+              <!-- Local -->
+              <div class="info-item">
+                <div class="info-icon">
+                  <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="info-content">
+                  <span class="info-label">Local</span>
+                  <span class="info-value"><%= evento.local || 'Local a definir' %></span>
+                </div>
+              </div>
+
+              <!-- Data -->
+              <div class="info-item">
+                <div class="info-icon">
+                  <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="info-content">
+                  <span class="info-label">Data</span>
+                  <span class="info-value">
+                    <%= new Date(evento.data_limite).toLocaleDateString('pt-BR', { 
+                      weekday: 'long',
+                      day: '2-digit', 
+                      month: 'long', 
+                      year: 'numeric' 
+                    }) %>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Hora -->
+              <% if (evento.hora) { %>
+                <div class="info-item">
+                  <div class="info-icon">
+                    <i class="fas fa-clock"></i>
+                  </div>
+                  <div class="info-content">
+                    <span class="info-label">Horário</span>
+                    <span class="info-value"><%= evento.hora %></span>
+                  </div>
+                </div>
+              <% } %>
+
+              <!-- Distância -->
+              <% if (evento.distancia) { %>
+                <div class="info-item">
+                  <div class="info-icon">
+                    <i class="fas fa-location-arrow"></i>
+                  </div>
+                  <div class="info-content">
+                    <span class="info-label">Distância</span>
+                    <span class="info-value"><%= evento.distancia %> km</span>
+                  </div>
+                </div>
+              <% } %>
+
+              <!-- Autor -->
+              <% if (evento.autor_nome) { %>
+                <div class="info-item">
+                  <div class="info-icon">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div class="info-content">
+                    <span class="info-label">Organizador</span>
+                    <span class="info-value"><%= evento.autor_nome %></span>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+
+            <!-- Botão de ação -->
+            <% if (evento.link) { %>
+              <div class="action-section">
+                <a href="<%= evento.link %>" target="_blank" rel="noopener noreferrer" class="go4it-btn">
+                  <i class="fas fa-external-link-alt"></i>
+                  Go4It
+                  <span class="btn-subtitle">Acessar evento</span>
+                </a>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Toggle do menu hambúrguer
+    document.addEventListener('DOMContentLoaded', function() {
+      const navbarToggle = document.getElementById('navbarToggle');
+      const navbarMenu = document.getElementById('navbarMenu');
+      
+      navbarToggle.addEventListener('click', function() {
+        navbarToggle.classList.toggle('active');
+        navbarMenu.classList.toggle('active');
+      });
+      
+      // Fechar menu ao clicar em um link
+      const navbarLinks = document.querySelectorAll('.navbar-link');
+      navbarLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          navbarToggle.classList.remove('active');
+          navbarMenu.classList.remove('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html> 

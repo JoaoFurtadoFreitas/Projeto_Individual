@@ -48,13 +48,12 @@ app.use((req, res, next) => {
 });
 
 if (require.main === module) {
-  const PORT = process.env.PORT || 3000;
- const HOST = '10.128.0.100'; // escuta em todas as interfaces de rede
+  const PORT = process.env.PORT || 3001;
+  const HOST = process.env.HOST || 'localhost'; // escuta em localhost por padrão
 
-app.listen(PORT, HOST, () => {
-  console.log(`Servidor rodando em http://${HOST}:${PORT}`);
-});
-
+  app.listen(PORT, HOST, () => {
+    console.log(`Servidor rodando em http://${HOST}:${PORT}`);
+  });
 }
 
 module.exports = app;

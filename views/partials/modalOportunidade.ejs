@@ -1,0 +1,75 @@
+<!-- Modal para <%= o.titulo %> -->
+<div class="modal fade" id="modal-<%= o.id %>" tabindex="-1" aria-labelledby="modalLabel-<%= o.id %>" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel-<%= o.id %>"><%= o.titulo %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <% if (o.imagem_url) { %>
+        <img src="<%= o.imagem_url %>" class="img-fluid mb-3 rounded" alt="<%= o.titulo %>">
+        <% } %>
+        
+        <p><%= o.descricao %></p>
+        
+        <% if (o.labels && o.labels.length > 0) { %>
+        <div class="mb-3">
+          <strong>Tags:</strong>
+          <% o.labels.forEach(label => { %>
+            <% if (label && label.nome) { %>
+            <span class="badge bg-secondary me-1"><%= label.nome %></span>
+            <% } %>
+          <% }) %>
+        </div>
+        <% } %>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <strong>Data limite:</strong> <%= new Date(o.data_limite).toLocaleDateString('pt-BR') %>
+          </div>
+          <% if (o.autor_nome) { %>
+          <div class="col-md-6">
+            <strong>Autor:</strong> <%= o.autor_nome %>
+            <% if (o.autor_cargo) { %>
+            <br><small class="text-muted"><%= o.autor_cargo %></small>
+            <% } %>
+          </div>
+          <% } %>
+        </div>
+        
+        <% 
+          const hoje = new Date();
+          const dataLimite = new Date(o.data_limite);
+          const diffTime = dataLimite - hoje;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        %>
+        <% if (diffDays >= 0) { %>
+        <div class="mt-3">
+          <div class="alert alert-info">
+            <% if (diffDays > 0) { %>
+              <i class="fas fa-clock"></i> <%= diffDays %> dia<%= diffDays > 1 ? 's' : '' %> restante<%= diffDays > 1 ? 's' : '' %>
+            <% } else { %>
+              <i class="fas fa-exclamation-triangle"></i> Último dia para se inscrever!
+            <% } %>
+          </div>
+        </div>
+        <% } else { %>
+        <div class="mt-3">
+          <div class="alert alert-danger">
+            <i class="fas fa-times-circle"></i> Esta oportunidade já venceu
+          </div>
+        </div>
+        <% } %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <% if (o.link && diffDays >= 0) { %>
+        <a href="<%= o.link %>" target="_blank" class="btn btn-primary">
+          <i class="fas fa-external-link-alt"></i> Acessar oportunidade
+        </a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>

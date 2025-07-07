@@ -1,8 +1,8 @@
-# Central de Vagas e Oportunidades Acadêmicas
+# Go4It
 
 ## 📌 Descrição do Projeto
 
-A **Central de Vagas e Oportunidades Acadêmicas** é uma plataforma web voltada para a comunidade do Inteli que visa facilitar o acesso e a divulgação de oportunidades acadêmicas como estágios, bolsas, eventos, competições, entre outros. A proposta é centralizar informações que antes estavam dispersas em canais como Slack ou e-mail, permitindo que alunos, professores e administradores colaborem para compartilhar e encontrar oportunidades de forma mais organizada e acessível.
+O **Go4It** é uma plataforma web voltada para a comunidade do Inteli que visa facilitar o acesso e a divulgação de oportunidades acadêmicas como estágios, bolsas, eventos, competições, entre outros. A proposta é centralizar informações que antes estavam dispersas em canais como Slack ou e-mail, permitindo que alunos, professores e administradores colaborem para compartilhar e encontrar oportunidades de forma mais organizada e acessível.
 
 ## 👥 Público-Alvo
 
