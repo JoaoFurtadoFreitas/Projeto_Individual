@@ -15,6 +15,7 @@ async function update(id, { nome, labels }) {
     await Promise.all(insertions);
   }
 }
+
 module.exports = {
   // 🆕 Função para criar usuário
   update,
@@ -23,8 +24,6 @@ module.exports = {
   const senha_hash = await bcrypt.hash(senha, 10);
   return await Usuario.create({ nome, email, senha_hash, cargo: tipo });
 },
-
-
 
   // 🆕 Função para listar usuários
   listUsers: async () => {
@@ -45,5 +44,19 @@ module.exports = {
   updatePerfil: async (usuarioId, nome, labels) => {
     await Usuario.updateNome(usuarioId, nome);
     await Usuario.setLabels(usuarioId, labels); // Relacionamento N:N
+  },
+
+  // Nova função para favoritos
+  getFavoritos: async (usuarioId) => {
+    // Por enquanto, retorna eventos recomendados baseados nas labels do usuário
+    // Em uma implementação completa, você teria uma tabela de favoritos
+    const usuario = await Usuario.findWithLabels(usuarioId);
+    if (!usuario || !usuario.labels || usuario.labels.length === 0) {
+      return [];
+    }
+
+    const Oportunidade = require('../models/Oportunidade');
+    const oportunidades = await Oportunidade.findByLabels(usuario.labels);
+    return await Promise.all(oportunidades.map(o => Oportunidade.findWithLabels(o.id)));
   }
 };

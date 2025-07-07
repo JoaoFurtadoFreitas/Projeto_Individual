@@ -4,216 +4,275 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Central de Oportunidades</title>
+  <title><%= locals.isFavoritesPage ? 'Favoritos' : (locals.tagAtiva ? `Eventos - ${locals.tagAtiva}` : 'Go4It') %></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/navbar.css">
+  <link rel="stylesheet" href="/public/css/footer.css">
+  <link rel="stylesheet" href="/public/css/home.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/home">Oportunidades</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="/home" class="navbar-logo">
+        <i class="fas fa-rocket logo-icon"></i>
+        Go4It
+      </a>
+      
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle navigation">
+        <span class="navbar-toggle-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-         
-
-        <% if (usuario) { %>
-          <li class="nav-item"><a class="nav-link" href="/usuario/perfil">Meu Perfil</a></li>
-          <li class="nav-item"><a class="nav-link" href="/auth/logout">Sair</a></li>
-        <% } else { %>
-          <li class="nav-item"><a class="nav-link" href="/auth/login">Login</a></li>
-          <li class="nav-item"><a class="nav-link" href="/auth/register">Cadastrar</a></li>
-        <% } %>
-
-        </ul>
-      </div>
+      
+      <ul class="navbar-menu" id="navbarMenu">
+        <li class="navbar-item">
+          <a href="/home" class="navbar-link <%= !locals.isFavoritesPage && !locals.tagAtiva ? 'active' : '' %>">
+            <i class="fas fa-home navbar-icon"></i>
+            Início
+          </a>
+        </li>
+        <li class="navbar-item">
+          <a href="/favorites" class="navbar-link favorites <%= locals.isFavoritesPage ? 'active' : '' %>">
+            <i class="fas fa-heart navbar-icon"></i>
+            Favoritos
+          </a>
+        </li>
+        <li class="navbar-item">
+          <a href="/perfil" class="navbar-link">
+            <i class="fas fa-user navbar-icon"></i>
+            Perfil
+          </a>
+        </li>
+      </ul>
     </div>
   </nav>
 
-  <!-- Header -->
-  <header class="bg-light py-5 text-center">
+  <!-- Header da página -->
+  <div class="home-hero">
+    <h1 class="home-slogan">De usuários, para usuários, <span class="home-highlight">Go4it</span></h1>
+    <p class="home-subtitle">Descubra, compartilhe e aproveite oportunidades acadêmicas únicas para expandir seus horizontes!</p>
+  </div>
+
+  <!-- Menu de filtros por tag -->
+  <div class="filters-section">
     <div class="container">
-      <h1 class="display-4">Bem-vindo à Central de Oportunidades</h1>
-      <p class="lead">Descubra e compartilhe oportunidades acadêmicas e profissionais</p>
-    </div>
-  </header>
-
-  <!-- CTA -->
-  <% if (!usuario) { %>
-  <section class="py-4 bg-primary text-white text-center">
-    <div class="container">
-      <h2>Junte-se à nossa comunidade!</h2>
-      <a href="/auth/register" class="btn btn-light btn-lg mt-3">Cadastre-se</a>
-    </div>
-  </section>
-  <% } %>
-
- <!-- Seção: Recomendadas -->
-<% if (recomendadas && recomendadas.length) { %>
-  <section class="container py-5">
-    <h3 class="mb-4">Recomendadas para você</h3>
-    <div class="row">
-      <% recomendadas.forEach((o, index) => { %>
-        <%- include('partials/cardOportunidade', { o, classeExtra: index >= 3 ? 'd-none recomendadas-card' : 'recomendadas-card' }) %>
-        <%- include('partials/modalOportunidade', { o }) %>
-      <% }) %>
-    </div>
-    <% if (recomendadas.length > 3) { %>
-      <div class="text-center mt-3">
-        <button id="mostrar-mais-recomendadas" class="btn btn-outline-success">Mostrar mais</button>
-      </div>
-    <% } %>
-  </section>
-<% } %>
-
-<!-- Seção: Próximas da Data Limite -->
-<% if (proximas && proximas.length) { %>
-  <section class="container py-5">
-    <h3 class="mb-4">Próximas da Data Limite</h3>
-    <div class="row">
-      <% proximas.forEach((o, index) => { %>
-      <%- include('partials/cardOportunidade', { 
-            o, 
-            classeExtra: index >= 3 ? 'd-none proximas-card' : 'proximas-card', 
-            mostrarDiasRestantes: true
-      }) %>
-      <%- include('partials/modalOportunidade', { o }) %>
-    <% }) %>
-
-    </div>
-    <% if (proximas.length > 3) { %>
-      <div class="text-center mt-3">
-        <button id="mostrar-mais-proximas" class="btn btn-outline-warning">Mostrar mais</button>
-      </div>
-    <% } %>
-  </section>
-<% } %>
-
-<!-- Seção: Todas as Oportunidades -->
-<% if (todas && todas.length) { %>
-  <section class="container py-5">
-    <h3 class="mb-4">Todas as Oportunidades</h3>
-    <div class="row">
-      <% todas.forEach((o, index) => { %>
-        <%- include('partials/cardOportunidade', { o, classeExtra: index >= 3 ? 'd-none todas-card' : 'todas-card' }) %>
-        <%- include('partials/modalOportunidade', { o }) %>
-      <% }) %>
-    </div>
-    <% if (todas.length > 3) { %>
-      <div class="text-center mt-3">
-        <button id="mostrar-mais-todas" class="btn btn-outline-primary">Mostrar mais</button>
-      </div>
-    <% } %>
-  </section>
-<% } %>
-   <% if (usuario) { %>
-<section class="container py-4">
-  <a href="#" class="btn btn-success mb-4" data-bs-toggle="modal" data-bs-target="#modalAdicionarOportunidade">
-    Criar nova oportunidade
-  </a>
-  <!-- Modal -->
-  <div class="modal fade" id="modalAdicionarOportunidade" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <form method="POST" action="/oportunidades/nova">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalLabel">Nova Oportunidade</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-          </div>
-          <div class="modal-body">
-            <!-- Campos do formulário -->
-            <div class="mb-3">
-              <label for="titulo" class="form-label">Título</label>
-              <input type="text" class="form-control" name="titulo" id="titulo" required>
-            </div>
-            <div class="mb-3">
-              <label for="descricao" class="form-label">Descrição</label>
-              <textarea class="form-control" name="descricao" id="descricao" rows="4" required></textarea>
-            </div>
-            <div class="mb-3">
-              <label for="imagem_url" class="form-label">URL da Imagem</label>
-              <input type="url" class="form-control" name="imagem_url" id="imagem_url">
-            </div>
-            <div class="mb-3">
-              <label for="link" class="form-label">Link da Oportunidade</label>
-              <input type="url" class="form-control" name="link" id="link" required>
-            </div>
-            <div class="mb-3">
-              <label for="data_limite" class="form-label">Data Limite</label>
-              <input type="date" class="form-control" name="data_limite" id="data_limite" required min="<%= new Date().toISOString().split('T')[0] %>">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Labels</label>
-              <div class="form-check form-check-inline">
-                <% labelsDisponiveis.forEach(label => { %>
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" name="labels[]" id="label_<%= label %>" value="<%= label %>">
-                    <label class="form-check-label" for="label_<%= label %>"><%= label %></label>
-                  </div>
-                <% }) %>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Adicionar</button>
-          </div>
-        </form>
+      <div class="filters-container">
+        <div class="filters-scroll">
+          <a href="/home" class="filter-btn filter-btn-all <%= !locals.tagAtiva && !locals.isFavoritesPage ? 'active' : '' %>">
+            <i class="fas fa-th-large"></i>
+            Todos
+          </a>
+          <% if (labelsDisponiveis && labelsDisponiveis.length > 0) { %>
+            <% labelsDisponiveis.forEach(tag => { %>
+              <a href="/filter/<%= tag %>" class="filter-btn filter-btn-<%= tag.toLowerCase() %> <%= locals.tagAtiva === tag ? 'active' : '' %>">
+                <%= tag %>
+              </a>
+            <% }) %>
+          <% } %>
+        </div>
       </div>
     </div>
   </div>
-</section>
-<% } %>
-  <!-- FAQ -->
-  <section class="container py-5">
-    <h3>Perguntas Frequentes</h3>
-    <div class="accordion" id="faqAccordion">
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faq1">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
-            Como posso me cadastrar?
-          </button>
-        </h2>
-        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Basta clicar em "Cadastrar" na barra superior e preencher o formulário.
+
+  <!-- Container principal de eventos -->
+  <div class="events-container">
+    <div class="events-grid">
+      <% if (todas && todas.length > 0) { %>
+        <% todas.forEach((evento) => { %>
+          <div class="event-card">
+            <% if (evento.imagem_url) { %>
+              <img src="<%= evento.imagem_url %>" alt="<%= evento.titulo %>" class="event-image">
+            <% } else { %>
+              <div class="event-image"></div>
+            <% } %>
+            
+            <div class="event-content">
+              <h3 class="event-title"><%= evento.titulo %></h3>
+              
+              <div class="event-location">
+                <i class="fas fa-map-marker-alt location-icon"></i>
+                <span><%= evento.local || 'Local a definir' %></span>
+              </div>
+              
+              <% if (evento.distancia) { %>
+                <div class="event-distance">
+                  <i class="fas fa-location-arrow"></i>
+                  <%= evento.distancia %> km
+                </div>
+              <% } %>
+              
+              <div class="event-date">
+                <i class="fas fa-calendar-alt"></i>
+                <%= new Date(evento.data_limite).toLocaleDateString('pt-BR', { 
+                  day: '2-digit', 
+                  month: '2-digit', 
+                  year: 'numeric' 
+                }) %>
+              </div>
+              
+              <% if (evento.tipo) { %>
+                <div class="event-type">
+                  <i class="fas fa-tag"></i>
+                  <%= evento.tipo %>
+                </div>
+              <% } %>
+              
+              <% if (evento.labels && evento.labels.length > 0) { %>
+                <div class="event-tags">
+                  <% evento.labels.forEach(label => { %>
+                    <% if (label && label.nome) { %>
+                      <span class="event-tag"><%= label.nome %></span>
+                    <% } %>
+                  <% }) %>
+                </div>
+              <% } %>
+              
+              <a href="/events/<%= evento.id %>" class="event-details-btn">
+                <i class="fas fa-eye"></i>
+                Ver detalhes
+              </a>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faq2">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
-            Quem pode publicar oportunidades?
-          </button>
-        </h2>
-        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Qualquer usuário cadastrado pode submeter uma nova oportunidade.
+        <% }) %>
+      <% } else { %>
+        <div class="events-empty">
+          <div class="events-empty-icon">
+            <i class="fas fa-calendar-times"></i>
           </div>
+          <% if (locals.isFavoritesPage) { %>
+            <h3>Nenhum favorito encontrado</h3>
+            <p>Configure seus interesses no perfil para ver eventos recomendados!</p>
+            <a href="/perfil" class="btn btn-primary">Configurar Interesses</a>
+          <% } else if (locals.tagAtiva) { %>
+            <h3>Nenhum evento encontrado</h3>
+            <p>Não há eventos disponíveis para "<%= locals.tagAtiva %>" no momento.</p>
+            <a href="/home" class="btn btn-primary">Ver Todos os Eventos</a>
+          <% } else { %>
+            <h3>Nenhum evento encontrado</h3>
+            <p>Não há eventos disponíveis no momento. Volte mais tarde!</p>
+          <% } %>
         </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Botão para adicionar novo evento (apenas para usuários logados) -->
+  <% if (usuario && !locals.isFavoritesPage && !locals.tagAtiva) { %>
+    <div class="text-center">
+      <button type="button" class="create-event-btn" id="openCreateEventModal">
+        <i class="fas fa-plus"></i>
+        Criar novo evento
+      </button>
+    </div>
+  <% } %>
+
+  <!-- Modal para adicionar evento -->
+  <% if (usuario && !locals.isFavoritesPage && !locals.tagAtiva) { %>
+    <div class="event-modal" id="createEventModal" style="display:none;">
+      <div class="event-modal-content">
+        <form class="event-modal-form" method="POST" action="/oportunidades/nova">
+          <div class="event-modal-header">
+            <h5 class="event-modal-title" id="modalLabel">Novo Evento</h5>
+            <button type="button" class="event-modal-close" id="closeCreateEventModal" aria-label="Fechar">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="form-group">
+            <label for="titulo" class="form-label">Título do Evento</label>
+            <input type="text" class="form-input" name="titulo" id="titulo" required>
+          </div>
+          <div class="form-group">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea class="form-input" name="descricao" id="descricao" rows="4" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="imagem_url" class="form-label">URL da Imagem</label>
+            <input type="url" class="form-input" name="imagem_url" id="imagem_url">
+          </div>
+          <div class="form-group">
+            <label for="link" class="form-label">Link do Evento</label>
+            <input type="url" class="form-input" name="link" id="link" required>
+          </div>
+          <div class="form-group">
+            <label for="data_limite" class="form-label">Data do Evento</label>
+            <input type="date" class="form-input" name="data_limite" id="data_limite" required min="<%= new Date().toISOString().split('T')[0] %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Categorias</label>
+            <div class="form-check-group">
+              <% if (labelsDisponiveis) { %>
+                <% labelsDisponiveis.forEach(label => { %>
+                  <label class="form-check">
+                    <input type="checkbox" name="labels[]" value="<%= label %>">
+                    <span><%= label %></span>
+                  </label>
+                <% }) %>
+              <% } %>
+            </div>
+          </div>
+          <button type="submit" class="btn-criar">
+            <i class="fas fa-plus"></i> Criar Evento
+          </button>
+        </form>
       </div>
     </div>
-  </section>
+  <% } %>
+
+  <!-- Footer -->
   <%- include('partials/footer') %>
 
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Navbar JavaScript -->
   <script>
-  document.getElementById('mostrar-mais-todas')?.addEventListener('click', () => {
-    document.querySelectorAll('.todas-card.d-none').forEach(card => card.classList.remove('d-none'));
-    document.getElementById('mostrar-mais-todas').style.display = 'none';
-  });
-  document.getElementById('mostrar-mais-recomendadas')?.addEventListener('click', () => {
-    document.querySelectorAll('.recomendadas-card.d-none').forEach(card => card.classList.remove('d-none'));
-    document.getElementById('mostrar-mais-recomendadas').style.display = 'none';
-  });
-  document.getElementById('mostrar-mais-proximas')?.addEventListener('click', () => {
-    document.querySelectorAll('.proximas-card.d-none').forEach(card => card.classList.remove('d-none'));
-    document.getElementById('mostrar-mais-proximas').style.display = 'none';
-  });
-</script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const navbarToggle = document.getElementById('navbarToggle');
+      const navbarMenu = document.getElementById('navbarMenu');
+      
+      if (navbarToggle && navbarMenu) {
+        navbarToggle.addEventListener('click', function() {
+          navbarMenu.classList.toggle('active');
+          navbarToggle.classList.toggle('active');
+        });
+      }
+    });
+  </script>
+
+  <script>
+    // Modal funcional sem Bootstrap
+    document.addEventListener('DOMContentLoaded', function() {
+      const openBtn = document.getElementById('openCreateEventModal');
+      const modal = document.getElementById('createEventModal');
+      const closeBtn = document.getElementById('closeCreateEventModal');
+      if (openBtn && modal && closeBtn) {
+        openBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          modal.style.display = 'flex';
+          setTimeout(() => { modal.classList.add('show'); }, 10);
+        });
+        closeBtn.addEventListener('click', function() {
+          modal.classList.remove('show');
+          setTimeout(() => { modal.style.display = 'none'; }, 200);
+        });
+        // Fechar ao clicar fora do conteúdo
+        modal.addEventListener('mousedown', function(e) {
+          if (e.target === modal) {
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+          }
+        });
+        // ESC fecha
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && modal.style.display === 'flex') {
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>

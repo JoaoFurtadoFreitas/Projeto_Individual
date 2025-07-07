@@ -1,0 +1,252 @@
+/* Estilos para a barra de navegação - Go4It */
+
+/* Variáveis */
+:root {
+  --navbar-bg: #ffffff;
+  --navbar-border: #e2e8f0;
+  --navbar-text: #1e293b;
+  --navbar-text-hover: #2563eb;
+  --navbar-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --navbar-height: 64px;
+  --navbar-padding: 1rem;
+  --transition: all 0.2s ease;
+}
+
+/* Barra de navegação principal */
+.navbar {
+  background: var(--navbar-bg);
+  border-bottom: 1px solid var(--navbar-border);
+  box-shadow: var(--navbar-shadow);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--navbar-height);
+  display: flex;
+  align-items: center;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--navbar-padding);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--navbar-text);
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+  transition: var(--transition);
+}
+
+.navbar-logo:hover {
+  color: var(--navbar-text-hover);
+  text-decoration: none;
+}
+
+.logo-icon {
+  margin-right: 0.5rem;
+  font-size: 1.75rem;
+  color: var(--navbar-text-hover);
+}
+
+/* Menu de navegação */
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-item {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-link {
+  color: var(--navbar-text);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-link:hover {
+  color: var(--navbar-text-hover);
+  background: rgba(37, 99, 235, 0.05);
+  text-decoration: none;
+}
+
+.navbar-link.active {
+  color: var(--navbar-text-hover);
+  background: rgba(37, 99, 235, 0.1);
+  font-weight: 600;
+}
+
+.navbar-icon {
+  font-size: 1.1rem;
+}
+
+/* Botão hambúrguer */
+.navbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: var(--transition);
+}
+
+.navbar-toggle:hover {
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.navbar-toggle-icon {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--navbar-text);
+  position: relative;
+  transition: var(--transition);
+}
+
+.navbar-toggle-icon::before,
+.navbar-toggle-icon::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: var(--navbar-text);
+  transition: var(--transition);
+}
+
+.navbar-toggle-icon::before {
+  top: -6px;
+}
+
+.navbar-toggle-icon::after {
+  bottom: -6px;
+}
+
+/* Estado ativo do menu hambúrguer */
+.navbar-toggle.active .navbar-toggle-icon {
+  background: transparent;
+}
+
+.navbar-toggle.active .navbar-toggle-icon::before {
+  transform: rotate(45deg);
+  top: 0;
+}
+
+.navbar-toggle.active .navbar-toggle-icon::after {
+  transform: rotate(-45deg);
+  bottom: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 1rem;
+  }
+  
+  .navbar-menu {
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    right: 0;
+    background: var(--navbar-bg);
+    border-bottom: 1px solid var(--navbar-border);
+    box-shadow: var(--navbar-shadow);
+    flex-direction: column;
+    gap: 0;
+    padding: 1rem 0;
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+  }
+  
+  .navbar-menu.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .navbar-item {
+    width: 100%;
+  }
+  
+  .navbar-link {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border-radius: 0;
+    justify-content: flex-start;
+  }
+  
+  .navbar-toggle {
+    display: block;
+  }
+  
+  .navbar-logo {
+    font-size: 1.25rem;
+  }
+  
+  .logo-icon {
+    font-size: 1.5rem;
+  }
+}
+
+/* Animações */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.navbar-menu.active {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Estados de foco para acessibilidade */
+.navbar-link:focus,
+.navbar-toggle:focus {
+  outline: 2px solid var(--navbar-text-hover);
+  outline-offset: 2px;
+}
+
+/* Redução de movimento */
+@media (prefers-reduced-motion: reduce) {
+  .navbar-menu,
+  .navbar-link,
+  .navbar-toggle,
+  .navbar-toggle-icon,
+  .navbar-toggle-icon::before,
+  .navbar-toggle-icon::after {
+    transition: none;
+  }
+  
+  .navbar-menu.active {
+    animation: none;
+  }
+} 

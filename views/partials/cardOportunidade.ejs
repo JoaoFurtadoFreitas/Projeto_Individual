@@ -1,0 +1,57 @@
+<div class="col-md-4 mb-4 <%= classeExtra || '' %>"></div>
+  <div class="card h-100 shadow-sm">
+    <% if (o.imagem_url) { %>
+    <img src="<%= o.imagem_url %>" class="card-img-top" alt="<%= o.titulo %>" style="height: 200px; object-fit: cover;">
+    <% } %>
+    <div class="card-body d-flex flex-column">
+      <h5 class="card-title"><%= o.titulo %></h5>
+      <p class="card-text flex-grow-1"><%= o.descricao %></p>
+      
+      <% if (o.labels && o.labels.length > 0) { %>
+      <div class="mb-2">
+        <% o.labels.forEach(label => { %>
+          <% if (label && label.nome) { %>
+          <span class="badge bg-secondary me-1"><%= label.nome %></span>
+          <% } %>
+        <% }) %>
+      </div>
+      <% } %>
+      
+      <div class="mt-auto">
+        <small class="text-muted">
+          <% if (typeof mostrarDiasRestantes !== 'undefined' && mostrarDiasRestantes) { %>
+            <% 
+              const hoje = new Date();
+              const dataLimite = new Date(o.data_limite);
+              const diffTime = dataLimite - hoje;
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            %>
+            <% if (diffDays > 0) { %>
+              <%= diffDays %> dia<%= diffDays > 1 ? 's' : '' %> restante<%= diffDays > 1 ? 's' : '' %>
+            <% } else if (diffDays === 0) { %>
+              Último dia!
+            <% } else { %>
+              Vencido
+            <% } %>
+          <% } else { %>
+            Data limite: <%= new Date(o.data_limite).toLocaleDateString('pt-BR') %>
+          <% } %>
+        </small>
+        <% if (o.autor_nome) { %>
+        <br><small class="text-muted">Por: <%= o.autor_nome %></small>
+        <% } %>
+      </div>
+      
+      <div class="mt-2">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-<%= o.id %>">
+          Ver detalhes
+        </button>
+        <% if (o.link) { %>
+        <a href="<%= o.link %>" target="_blank" class="btn btn-outline-primary btn-sm">
+          Acessar
+        </a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
